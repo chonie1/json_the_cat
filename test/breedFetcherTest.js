@@ -18,9 +18,8 @@ describe('fetchBreedDescription', () => {
 
   it('returns an error if an non-existent breed is passed in', (done) => {
     fetchBreedDescription('Connie', (err, desc) => {
-      assert.equal(err, 'Invalid Breed!');
+      assert.equal(err.message, 'Invalid Breed!');
       assert.equal(null, desc);
-
       done();
     });
   });

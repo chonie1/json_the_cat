@@ -4,24 +4,21 @@ const fetchBreedDescription = function(breedName, callback) {
   const endpoint = `https://api.thecatapi.com/v1/breeds/search?q=${breedName}`;
     
   request(endpoint, (error,response,body) => {
-    let errorMessage = null;
-    let description = null;
-    
     if (error) {
-      return callback(error, description);
+      return callback(error, null);
     }
 
     const data = JSON.parse(body);
     
     if (response.statusCode !== 200) {
-      errorMessage = data.message;
-    } else if (!data.length) {
-      errorMessage = 'Invalid Breed!';
-    } else {
-      description = data[0].description;
+      return callback(Error(data.message),null);
     }
-  
-    callback(errorMessage, description);
+    
+    if (!data.length) {
+      return callback(Error('Invalid Breed!'),null);
+    }
+
+    callback(null, data[0].description);
     
   });
 
