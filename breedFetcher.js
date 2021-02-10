@@ -1,18 +1,30 @@
 const request = require('request');
-const breed = process.argv[2];
-const endpoint = `https://api.thecatapi.com/v1/breeds/search?q=${breed}`;
 
-request(endpoint, (error,response,body) => {
+const fetchBreedDescription = function(breedName, callback) {
+  const endpoint = `https://api.thecatapi.com/v1/breeds/search?q=${breedName}`;
+    
+  request(endpoint, (error,response,body) => {
+    let errorMessage = null;
+    let description = null;
+    
+    if (error) {
+      return callback(error, description);
+    }
+
+    const data = JSON.parse(body);
+    
+    if (response.statusCode !== 200) {
+      errorMessage = data.message;
+    } else if (!data.length) {
+      errorMessage = 'Invalid Breed!';
+    } else {
+      description = data[0].description;
+    }
   
-  if (error) {
-    return console.log('There was an error with the request');
-  }
-  const data = JSON.parse(body);
+    callback(errorMessage, description);
+    
+  });
 
-  if (response.statusCode !== 200) {
-    return console.log(data.message);
-  }
-  
-  console.log(data[0].description);
+};
 
-});
+module.exports = { fetchBreedDescription };
